@@ -12,6 +12,19 @@ body {
   gap: 1em;
 }
 
+#deck {
+  position: fixed;           /* stays in place even if the page scrolls */
+  right: 140px;               /* 20px from the right edge */
+  top: 50%;                  /* halfway down the screen */
+  transform: translateY(-50%); /* perfectly centers it vertically */
+  width: 80px;               /* adjust size as needed */
+  height: auto;
+  cursor: pointer;           /* optional: shows clickable hand */
+  z-index: 10;   
+
+}
+
+
 #dealer, #player {
   display: flex;
   flex-direction: column;
