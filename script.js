@@ -74,14 +74,65 @@ function drawCard(hand, displayDiv) {
 }
 
 function drawDealer(hand, displayDiv) {
+/*
+  const hiddenCard = deck.pop();
+  dealerHand.push(hiddenCard);
 
-  const card = deck.pop();
-  hand.push(card);
-  const cardDiv = document.createElement('div');
-  cardDiv.className = 'cardDealer';
-  cardDiv.textContent = `${card.rank}${card.suit}`;
+  // Create real dealer card but keep it hidden
+  const hiddenCardDiv = document.createElement('div');
+  hiddenCardDiv.className = 'card';
+  hiddenCardDiv.textContent = `${hiddenCard.rank}${hiddenCard.suit}`;
+  hiddenCardDiv.style.opacity = '0'; // hidden initially
+  hiddenCardDiv.id = 'hidden-dealer-card'; // so we can reveal it later
+  animateCardToTarget(hiddenCardDiv, dealerCardsDiv);
 
-  animateCardToTarget(cardDiv, displayDiv);
+  const cardBackDiv = document.createElement('div');
+  cardBackDiv.className = 'card';
+  cardBackDiv.style.backgroundImage = 'url("Assets/cardBack.png")';
+  cardBackDiv.style.backgroundSize = 'cover';
+  cardBackDiv.style.backgroundPosition = 'center';
+  cardBackDiv.style.color = 'transparent'; // hides text if added
+  cardBackDiv.id = 'dealer-back-img';
+  animateCardToTarget(cardBackDiv, dealerCardsDiv);
+*/
+ const hiddenCard = deck.pop();
+  dealerHand.push(hiddenCard);
+
+  const cardWrapper = document.createElement('div');
+  cardWrapper.className = 'card-wrapper';
+  cardWrapper.style.position = 'relative';
+  cardWrapper.style.width = '72px';
+  cardWrapper.style.height = '102px';
+
+  // Real card (hidden initially)
+  const hiddenCardDiv = document.createElement('div');
+  hiddenCardDiv.className = 'card';
+  hiddenCardDiv.textContent = `${hiddenCard.rank}${hiddenCard.suit}`;
+  hiddenCardDiv.style.opacity = '0';
+  hiddenCardDiv.id = 'hidden-dealer-card';
+  hiddenCardDiv.style.position = 'absolute';
+  hiddenCardDiv.style.top = '0';
+  hiddenCardDiv.style.left = '0';
+
+  // Back card (animated into place)
+  const cardBackDiv = document.createElement('div');
+  cardBackDiv.className = 'card';
+  cardBackDiv.style.backgroundImage = 'url("Assets/cardBack.png")';
+  cardBackDiv.style.backgroundSize = 'cover';
+  cardBackDiv.style.backgroundPosition = 'center';
+  cardBackDiv.style.color = 'transparent';
+  cardBackDiv.id = 'dealer-back-img';
+  cardBackDiv.style.position = 'absolute';
+  cardBackDiv.style.top = '0';
+  cardBackDiv.style.left = '0';
+
+  // Append both to wrapper
+  cardWrapper.appendChild(hiddenCardDiv);
+  cardWrapper.appendChild(cardBackDiv);
+  displayDiv.appendChild(cardWrapper);
+
+  // Animate the BACK CARD ONLY to the wrapper's position
+  animateCardToTarget(cardBackDiv, cardWrapper);
 }
 
 function calculateTotal(hand) {
@@ -129,11 +180,12 @@ async function startGame() {
 
   gains -= betAmount;
   document.getElementById('betButton').disabled = true;
+  document.getElementById('deal').disabled = true;
   updateScore();
 
   drawCard(playerHand, playerCardsDiv);
   await delay(200);
-  drawCard(dealerHand, dealerCardsDiv);
+  drawDealer(dealerHand, dealerCardsDiv);
   await delay(200);
   drawCard(playerHand, playerCardsDiv);
   await delay(200);
@@ -168,6 +220,11 @@ async function dealerTurn() {
   document.getElementById('hit').disabled = true;
   document.getElementById('stand').disabled = true;
   document.getElementById('double').disabled = true;
+
+  document.getElementById('hidden-dealer-card').style.opacity = '1'; // show real card
+  document.getElementById('dealer-back-img').remove(); // remove card back image
+
+  await delay(500); // let the flip animation settle
 
   while (calculateTotal(dealerHand) < 17) {
 
@@ -222,11 +279,6 @@ function placeBet() {
     return;
   }
 
-  if (input > gains) {
-    alert("Not enough chips!");
-    return;
-  }
-
   betAmount = input;
   document.getElementById('deal').disabled = false;
 
@@ -245,6 +297,7 @@ function endGame(message) {
   document.getElementById('hit').disabled = true;
   document.getElementById('stand').disabled = true;
   document.getElementById('double').disabled = true;
+  document.getElementById('deal').disabled = false;
 
 }
 
@@ -278,9 +331,3 @@ function delay(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/*
-Hidden card:
-
-New function that still pops off deck of original - just has both image and card taken to same spot with opacities 0/100. at stand switch opacities
-Have first dealer card take from it
-*/
