@@ -1,3 +1,5 @@
+
+
 const suits = ['♠', '♥', '♦', '♣'];
 const ranks = ['A', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K'];
 
@@ -5,26 +7,46 @@ let deck = [];
 let playerHand = [];
 let dealerHand = [];
 let playerStand = false;
-let gains = 0;
+let showDealer = false;
+let gains = 1000;
+let betAmount = 0;
+let ifDouble = false;
 
 const dealerCardsDiv = document.getElementById('dealer-cards');
 const playerCardsDiv = document.getElementById('player-cards');
+const dealerCard = document.getElementById('dealerBack');
 const messageDiv = document.getElementById('message');
 
+const betInputElement = document.getElementById('bet-input');
 document.getElementById('deal').onclick = startGame;
+document.getElementById('deal').disabled = true;
+
 document.getElementById('hit').onclick = () => hit(playerHand, playerCardsDiv);
 document.getElementById('stand').onclick = () => {
-  playerStand = true;
-  dealerTurn();
-};
-document.getElementById('double').onclick = () => {
-  
-  hit(playerHand, playerCardsDiv);
+
   playerStand = true;
   dealerTurn();
 
 };
-//document.getElementById('split').onclick = () => splitCards(playerHand, playerCardsDiv);
+document.getElementById('double').onclick = async () => {
+  
+  ifDouble = true;
+  gains -= betAmount;
+  updateScore();
+
+  await hit(playerHand, playerCardsDiv);
+
+  const total = calculateTotal(playerHand);
+
+  if (total > 21) {
+    endGame("You busted! Dealer wins.");
+    return;
+  }
+
+  playerStand = true;
+  dealerTurn();
+
+};
 
 function createDeck() {
 
@@ -46,8 +68,20 @@ function drawCard(hand, displayDiv) {
   const cardDiv = document.createElement('div');
   cardDiv.className = 'card';
   cardDiv.textContent = `${card.rank}${card.suit}`;
-  displayDiv.appendChild(cardDiv);
 
+  animateCardToTarget(cardDiv, displayDiv);
+
+}
+
+function drawDealer(hand, displayDiv) {
+
+  const card = deck.pop();
+  hand.push(card);
+  const cardDiv = document.createElement('div');
+  cardDiv.className = 'cardDealer';
+  cardDiv.textContent = `${card.rank}${card.suit}`;
+
+  animateCardToTarget(cardDiv, displayDiv);
 }
 
 function calculateTotal(hand) {
@@ -81,7 +115,7 @@ function calculateTotal(hand) {
   return total;
 }
 
-function startGame() {
+async function startGame() {
 
   playerHand = [];
   dealerHand = [];
@@ -93,61 +127,116 @@ function startGame() {
   playerCardsDiv.innerHTML = '';
   messageDiv.textContent = '';
 
+  gains -= betAmount;
+  document.getElementById('betButton').disabled = true;
+  updateScore();
+
   drawCard(playerHand, playerCardsDiv);
+  await delay(200);
   drawCard(dealerHand, dealerCardsDiv);
+  await delay(200);
   drawCard(playerHand, playerCardsDiv);
+  await delay(200);
   drawCard(dealerHand, dealerCardsDiv);
+  await delay(200);
 
   document.getElementById('hit').disabled = false;
   document.getElementById('stand').disabled = false;
   document.getElementById('double').disabled = false;
-  document.getElementById('split').disabled = false;
-  
+
 }
 
-function hit(hand, displayDiv) {
-
+async function hit(hand, displayDiv) {
+  document.getElementById('hit').disabled = true;
   document.getElementById('double').disabled = true;
-  document.getElementById('split').disabled = true;
 
   drawCard(hand, displayDiv);
+  await delay(1000)
 
   const total = calculateTotal(playerHand);
 
   if (total > 21) {
     endGame('You busted! Dealer wins.');
+  } else {
+    document.getElementById('hit').disabled = false;
   }
 
 }
 
-function dealerTurn() {
+async function dealerTurn() {
 
   document.getElementById('hit').disabled = true;
   document.getElementById('stand').disabled = true;
   document.getElementById('double').disabled = true;
-  document.getElementById('split').disabled = true;
 
   while (calculateTotal(dealerHand) < 17) {
 
     drawCard(dealerHand, dealerCardsDiv);
+    await delay(1000);
 
   }
 
   const playerTotal = calculateTotal(playerHand);
   const dealerTotal = calculateTotal(dealerHand);
 
-  if (dealerTotal > 21 || playerTotal > dealerTotal) {
+   if (playerTotal > dealerTotal || dealerTotal > 21) {
+      if (ifDouble === true) {
+          gains += betAmount * 4;
+          ifDouble = false;
+    } else {
+          gains += betAmount * 2;
+    }
 
-    endGame('You win!');
+    endGame("You win!");
 
-  } else if (playerTotal < dealerTotal) {
+  } else if (dealerTotal > playerTotal) {
 
-    endGame('Dealer wins.');
+    endGame("Dealer wins.");
 
   } else {
 
+    if (ifDouble === true) {
+        gains += betAmount * 2;
+        ifDouble = false;
+    } else {
+        gains += betAmount;
+    }
     endGame("It's a tie!");
   }
+
+  updateScore();
+  document.getElementById('betButton').disabled = false;
+}
+
+function updateScore() {
+  document.getElementById('score').textContent = `Your Chips: $${gains}`;
+}
+
+function placeBet() {
+  const input = parseInt(betInputElement.value);
+
+  if (isNaN(input) || input <= 0) {
+
+    alert("Invalid bet");
+
+    return;
+  }
+
+  if (input > gains) {
+    alert("Not enough chips!");
+    return;
+  }
+
+  betAmount = input;
+  document.getElementById('deal').disabled = false;
+
+  document.getElementById('begin').style.opacity = '0';
+  document.getElementById('curBet').style.opacity = '100';
+  document.getElementById('score').style.opacity = '100';
+
+  document.getElementById('curBet').textContent = `Current Bet: $${betAmount}`;
+  updateScore();
+  betInputElement.value = '';
 }
 
 function endGame(message) {
@@ -156,6 +245,42 @@ function endGame(message) {
   document.getElementById('hit').disabled = true;
   document.getElementById('stand').disabled = true;
   document.getElementById('double').disabled = true;
-  document.getElementById('split').disabled = true;
 
 }
+
+function animateCardToTarget(cardDiv, targetDiv) {
+  // Get deck and target positions
+  const deckRect = document.getElementById('deck').getBoundingClientRect();
+  const targetRect = targetDiv.getBoundingClientRect();
+
+  // Initial position: deck
+  cardDiv.style.left = `${deckRect.left}px`;
+  cardDiv.style.top = `${deckRect.top}px`;
+
+  // Append card to body for absolute positioning
+  document.body.appendChild(cardDiv);
+
+  // Force reflow to allow transition
+  getComputedStyle(cardDiv).left;
+
+  // Target position
+  cardDiv.style.left = `${targetRect.left + targetRect.width / 2 - 36}px`; // 36 = card width / 2
+  cardDiv.style.top = `${targetRect.top + targetRect.height / 2 - 51}px`; // 51 = card height / 2
+
+  // After animation, move it into the actual container
+  setTimeout(() => {
+    cardDiv.style.position = 'static';
+    targetDiv.appendChild(cardDiv);
+  }, 600); // matches transition duration
+} 
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+/*
+Hidden card:
+
+New function that still pops off deck of original - just has both image and card taken to same spot with opacities 0/100. at stand switch opacities
+Have first dealer card take from it
+*/

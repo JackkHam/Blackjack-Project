@@ -15,25 +15,43 @@
   <div id="game">
 
     <div id="deck">
-      <img src="Assets/cardBack.png" alt="logo" />
+      <img id="decksrc" src="Assets/cardBack.png" alt="deck-cards" />
     </div>
 
-
-    <div id="dealer">
-
-      <h2>Dealer</h2>
-      <div id="dealer-card-facedown"></div>
-      <div id="dealer-cards"></div>
-      <div id="dealer-total"></div>
-
+    <div id="score">
     </div>
 
-    <div id="player">
+    <div id="bet">
+       <input type="number" id="bet-input" placeholder="Enter your bet" min="0" />
+       <button id="betButton" onclick="placeBet()">Place Bet</button>
+    </div>
 
-      <h2>Player</h2>
-      <div id="player-cards"></div>
-      <div id="player-total"></div>
+    <div id="curBet"> 
+    </div>
 
+    <div id="table">
+        <div id="dealer">
+
+          <h2>Dealer</h2>
+          <div id="dealer-card-facedown">
+              <img id="dealerBack" src="Assets/cardBack.png"/>
+          </div>
+          <div id="dealer-cards"></div>
+          <div id="dealer-total"></div>
+
+        </div>
+
+        <div id="begin">
+          <h4>Place A Bet To Begin!</h4>
+        </div>
+
+        <div id="player">
+
+          <h2>Player</h2>
+          <div id="player-cards"></div>
+          <div id="player-total"></div>
+
+        </div>
     </div>
 
     <div id="controls">
@@ -42,7 +60,6 @@
       <button id="hit" disabled>Hit</button>
       <button id="stand" disabled>Stand</button>
       <button id="double" disabled>Double</button>
-      <button id="split" disabled>Split</button>
 
     </div>
 
