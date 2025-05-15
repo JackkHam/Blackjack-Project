@@ -1,22 +1,29 @@
+
+
 body {
+
   font-family: sans-serif;
   text-align: center;
   background: #0b0b0b;
   color: white;
   background-image: url("Assets/backgroundTable.jpg");
-  background-size: cover; /* Makes the image cover the whole screen */
-  background-position: center; /* Center the image */
+  background-size: cover; 
+  background-position: center; 
   background-repeat: no-repeat;
+
 }
 
 #game {
+
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1em;
+
 }
 
 #deck {
+
   position: fixed;           
   right: 140px;              
   top: 50%;                  
@@ -99,34 +106,38 @@ body {
 }
 
 #table {
+
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 400px; /* Adjust based on how much space you want reserved */
+  height: 400px; 
   min-height: 400px;
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
+
 }
 
 #dealer, #player {
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-height: 150px; /* Reserve space so things don't jump */
+  min-height: 150px;
+
 }
 
 #dealer-cards, #player-cards {
  
   position: relative;
   display: flex;
-  gap: 10px; /* space between cards */
-  height: 120px; /* enough to prevent jumpy layout */
+  gap: 10px;
+  height: 120px; 
 
 }
 
-
 .card {
+
   width: 72px;
   height: 102px;
   border: 1px solid white;
@@ -135,9 +146,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute; /* Make them able to move freely */
+  position: absolute; 
   transition: transform 0.6s ease-in-out, left 0.6s ease-in-out, top 0.6s ease-in-out;
   z-index: 5;
+
 }
 
 .cardDealer {
