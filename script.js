@@ -12,6 +12,7 @@ let gains = 1000;
 let betAmount = 0;
 let ifDouble = false;
 
+const bgMusic = document.getElementById('bg-music');
 const dealerCardsDiv = document.getElementById('dealer-cards');
 const playerCardsDiv = document.getElementById('player-cards');
 const dealerCard = document.getElementById('dealerBack');
@@ -278,6 +279,8 @@ function placeBet() {
 
     return;
   }
+
+   bgMusic.play();
 
   betAmount = input;
   document.getElementById('deal').disabled = false;
