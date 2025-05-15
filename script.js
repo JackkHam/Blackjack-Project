@@ -75,27 +75,7 @@ function drawCard(hand, displayDiv) {
 }
 
 function drawDealer(hand, displayDiv) {
-/*
-  const hiddenCard = deck.pop();
-  dealerHand.push(hiddenCard);
 
-  // Create real dealer card but keep it hidden
-  const hiddenCardDiv = document.createElement('div');
-  hiddenCardDiv.className = 'card';
-  hiddenCardDiv.textContent = `${hiddenCard.rank}${hiddenCard.suit}`;
-  hiddenCardDiv.style.opacity = '0'; // hidden initially
-  hiddenCardDiv.id = 'hidden-dealer-card'; // so we can reveal it later
-  animateCardToTarget(hiddenCardDiv, dealerCardsDiv);
-
-  const cardBackDiv = document.createElement('div');
-  cardBackDiv.className = 'card';
-  cardBackDiv.style.backgroundImage = 'url("Assets/cardBack.png")';
-  cardBackDiv.style.backgroundSize = 'cover';
-  cardBackDiv.style.backgroundPosition = 'center';
-  cardBackDiv.style.color = 'transparent'; // hides text if added
-  cardBackDiv.id = 'dealer-back-img';
-  animateCardToTarget(cardBackDiv, dealerCardsDiv);
-*/
  const hiddenCard = deck.pop();
   dealerHand.push(hiddenCard);
 
@@ -105,7 +85,7 @@ function drawDealer(hand, displayDiv) {
   cardWrapper.style.width = '72px';
   cardWrapper.style.height = '102px';
 
-  // Real card (hidden initially)
+  //Real card
   const hiddenCardDiv = document.createElement('div');
   hiddenCardDiv.className = 'card';
   hiddenCardDiv.textContent = `${hiddenCard.rank}${hiddenCard.suit}`;
@@ -115,7 +95,7 @@ function drawDealer(hand, displayDiv) {
   hiddenCardDiv.style.top = '0';
   hiddenCardDiv.style.left = '0';
 
-  // Back card (animated into place)
+  //Back card
   const cardBackDiv = document.createElement('div');
   cardBackDiv.className = 'card';
   cardBackDiv.style.backgroundImage = 'url("Assets/cardBack.png")';
@@ -127,16 +107,16 @@ function drawDealer(hand, displayDiv) {
   cardBackDiv.style.top = '0';
   cardBackDiv.style.left = '0';
 
-  // Append both to wrapper
+  //Both to wrapper
   cardWrapper.appendChild(hiddenCardDiv);
   cardWrapper.appendChild(cardBackDiv);
   displayDiv.appendChild(cardWrapper);
 
-  // Animate the BACK CARD ONLY to the wrapper's position
   animateCardToTarget(cardBackDiv, cardWrapper);
 }
 
 function calculateTotal(hand) {
+
   let total = 0;
   let aces = 0;
 
@@ -200,6 +180,7 @@ async function startGame() {
 }
 
 async function hit(hand, displayDiv) {
+
   document.getElementById('hit').disabled = true;
   document.getElementById('double').disabled = true;
 
@@ -222,10 +203,10 @@ async function dealerTurn() {
   document.getElementById('stand').disabled = true;
   document.getElementById('double').disabled = true;
 
-  document.getElementById('hidden-dealer-card').style.opacity = '1'; // show real card
-  document.getElementById('dealer-back-img').remove(); // remove card back image
+  document.getElementById('hidden-dealer-card').style.opacity = '1';
+  document.getElementById('dealer-back-img').remove();
 
-  await delay(500); // let the flip animation settle
+  await delay(500);
 
   while (calculateTotal(dealerHand) < 17) {
 
@@ -305,29 +286,25 @@ function endGame(message) {
 }
 
 function animateCardToTarget(cardDiv, targetDiv) {
-  // Get deck and target positions
+ 
   const deckRect = document.getElementById('deck').getBoundingClientRect();
   const targetRect = targetDiv.getBoundingClientRect();
 
-  // Initial position: deck
   cardDiv.style.left = `${deckRect.left}px`;
   cardDiv.style.top = `${deckRect.top}px`;
 
-  // Append card to body for absolute positioning
   document.body.appendChild(cardDiv);
 
-  // Force reflow to allow transition
   getComputedStyle(cardDiv).left;
 
-  // Target position
-  cardDiv.style.left = `${targetRect.left + targetRect.width / 2 - 36}px`; // 36 = card width / 2
-  cardDiv.style.top = `${targetRect.top + targetRect.height / 2 - 51}px`; // 51 = card height / 2
+  cardDiv.style.left = `${targetRect.left + targetRect.width / 2 - 36}px`;
+  cardDiv.style.top = `${targetRect.top + targetRect.height / 2 - 51}px`;
 
-  // After animation, move it into the actual container
   setTimeout(() => {
     cardDiv.style.position = 'static';
     targetDiv.appendChild(cardDiv);
-  }, 600); // matches transition duration
+  }, 600);
+  
 } 
 
 function delay(ms) {
