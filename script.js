@@ -13,12 +13,15 @@ let betAmount = 0;
 let ifDouble = false;
 
 const bgMusic = document.getElementById('bg-music');
+
 const dealerCardsDiv = document.getElementById('dealer-cards');
 const playerCardsDiv = document.getElementById('player-cards');
 const dealerCard = document.getElementById('dealerBack');
 const messageDiv = document.getElementById('message');
 
 const betInputElement = document.getElementById('bet-input');
+
+
 document.getElementById('deal').onclick = startGame;
 document.getElementById('deal').disabled = true;
 
@@ -29,6 +32,8 @@ document.getElementById('stand').onclick = () => {
   dealerTurn();
 
 };
+
+
 document.getElementById('double').onclick = async () => {
   
   ifDouble = true;
@@ -261,7 +266,7 @@ function placeBet() {
     return;
   }
 
-   bgMusic.play();
+  bgMusic.play();
 
   betAmount = input;
   document.getElementById('deal').disabled = false;
